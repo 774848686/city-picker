@@ -1,10 +1,8 @@
 <template>
   <div id="app">
     <city-picker 
-    title="代理投放平台" 
-    :rules="rules" 
-    :loading="loading" 
-    @loginSubmit='loginSubmit'>
+    :selectData="selectData"
+    @selectChange="selectChange">
     </city-picker>
   </div>
 </template>
@@ -13,36 +11,15 @@
 export default {
   name: "App",
   data() {
-    const validateName = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入账号"));
-        return;
-      }
-      callback();
-    };
-    const validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-        return;
-      }
-      callback();
-    };
     return {
-      rules: {
-        username: [{ validator: validateName, trigger: "blur" }],
-        password: [{ validator: validatePass, trigger: "blur" }]
-      },
-      loading:true
+     selectData:['210300']
     };
   },
 
   methods: {
-    loginSubmit(param){
-      console.log(param)
-      setTimeout(()=>{
-        this.loading = false;
-      },1000)
-    }
+   selectChange(data){
+     console.log(data)
+   }
   }
 };
 </script>

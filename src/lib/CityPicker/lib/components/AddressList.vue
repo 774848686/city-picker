@@ -33,7 +33,7 @@
       >
         <div
           class="items"
-          style="width: 1000px"
+          style="width: 880px"
         >
           <div
             class="item"
@@ -52,7 +52,6 @@
                   :selectData="selectDataFormat"
                   :highlightProvince="highlightProvince"
                   :highlightCity="highlightCity"
-                  :importData="importData"
                   @newEvent="parentLisen"
                 ></address-city>
               </li>
@@ -78,24 +77,14 @@ export default {
       keywords: "",
       highlightProvince: "",
       highlightCity: "",
-      importData: [],
       selectDataFormat: []
     };
   },
-  props: ["selectData", "isEdit"],
+  props: ["selectData"],
   components: {
     AddressCity
   },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: "success",
-        draft: "gray",
-        deleted: "danger"
-      };
-      return statusMap[status];
-    }
-  },
+  filters: {},
   created() {
     if (this.selectData) {
       this.selectDataFormat = this.selectData.map(item => {
@@ -122,6 +111,7 @@ export default {
       } else {
         this.checkData.push({ code: code, data: tmplArr });
       }
+      this.$emit('selectChange',this.getCitiesCode(this.checkData))
     },
     searchCity() {
       this.highlightProvince = "";
@@ -157,50 +147,10 @@ export default {
         this.$message.error("您输入的省/市名有误！");
       }
     },
-    openFile() {
-      this.$refs.exportFile.click();
-    },
     getCitiesCode(array) {
       if (array.length == 0) return;
-      const cities = {};
-      this.list.forEach(area => {
-        area.provinces.forEach(province => {
-          const name = province.provinceName;
-          if (
-            name == "北京市" ||
-            name == "天津市" ||
-            name == "上海市" ||
-            name == "重庆市"
-          ) {
-            cities[province.provinceName] = {};
-            province.city.forEach(city => {
-              cities[province.provinceName][city.cityName] = city.cityCode;
-            });
-          } else {
-            province.city.forEach(city => {
-              cities[city.cityName] = city.cityCode;
-            });
-          }
-        });
-      });
       const obj = {},
         returnValue = [];
-      array.forEach(x => {
-        if (
-          x.city == "北京市" ||
-          x.city == "天津市" ||
-          x.city == "上海市" ||
-          x.city == "重庆市"
-        ) {
-          for (var key in cities[x.city]) {
-            obj[cities[x.city][key]] = true;
-          }
-        } else {
-          if (cities[x.city]) {
-            obj[cities[x.city]] = true;
-          }
-        }
-      });
       this.checkData.forEach(x => {
         x.data.forEach(y => {
           obj[y] = true;
@@ -223,13 +173,13 @@ export default {
           });
         });
       });
-      this.importData = array;
+      this.selectDataFormat = array;
     },
     /**
      * 全不选
      */
     checkNone() {
-      this.importData = [];
+      this.selectDataFormat = [];
     }
   }
 };

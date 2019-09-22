@@ -2,8 +2,8 @@
   <div>
     <div
       class="checkbox item-province"
-      @mouseover="showSubMenu(itemData.provinceCode)"
-      @mouseout="showSubMenu(0)"
+      @mouseenter="showSubMenu(itemData.provinceCode)"
+      @mouseleave="showSubMenu(0)"
     >
       <el-checkbox
         :label="itemData.provinceCode"
@@ -11,20 +11,24 @@
         v-model="checkAll"
         @change="handleCheckAllChange"
       >
-        <span
-          :class="{'color-red': itemData.provinceCode == highlightProvince}"
-        >{{itemData.provinceName}}</span>
+        <span :class="{'color-red': itemData.provinceCode == highlightProvince}">{{itemData.provinceName}}</span>
       </el-checkbox>
       <el-tag v-if="checkedCities.length > 0">{{checkedCities.length}}/{{cities.length}}</el-tag>
     </div>
     <ul
       class="child item-citys"
       v-if="ifshow == itemData.provinceCode"
-      @mouseover="showSubMenu(itemData.provinceCode)"
-      @mouseout="showSubMenu(0)"
+      @mouseenter="showSubMenu(itemData.provinceCode)"
+      @mouseleave="showSubMenu(0)"
     >
-      <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-        <li v-for="(itemCity,cityIndex) in itemData.city" :key="cityIndex">
+      <el-checkbox-group
+        v-model="checkedCities"
+        @change="handleCheckedCitiesChange"
+      >
+        <li
+          v-for="(itemCity,cityIndex) in itemData.city"
+          :key="cityIndex"
+        >
           <el-checkbox :label="itemCity.cityCode">
             <span :class="{'color-red': itemCity.cityCode == highlightCity}">{{itemCity.cityName}}</span>
           </el-checkbox>
@@ -101,8 +105,7 @@ export default {
     "provinceCode",
     "selectData",
     "highlightProvince",
-    "highlightCity",
-    "importData"
+    "highlightCity"
   ],
   mounted() {
     let cityArr = this.itemData.city;
@@ -110,6 +113,7 @@ export default {
       this.cities.push(v.cityCode);
     });
     this.chilCall();
+    this.initselectData(this.selectData);
   },
   methods: {
     showSubMenu(num) {
@@ -124,6 +128,18 @@ export default {
       this.checkAll = checkedCount === this.cities.length;
       this.chilCall();
     },
+    initselectData(array) {
+      this.checkedCities = this.cities.filter(function(v) {
+        return array.indexOf(v) > -1;
+      });
+      if (this.cities.length == this.checkedCities.length) {
+        this.checkAll = true;
+      }
+      if (array.length == 0) {
+        this.checkAll = false;
+      }
+      this.chilCall();
+    },
     chilCall() {
       this.$emit(
         "newEvent",
@@ -134,17 +150,8 @@ export default {
     }
   },
   watch: {
-    importData: function(array) {
-      this.checkedCities = this.cities.filter(function(v) {
-        return array.indexOf(v) > -1;
-      });
-      if (this.cities.length == this.checkedCities.length) {
-        this.checkAll = true;
-      }
-       if (array.length == 0){
-          this.checkAll = false;
-       }
-      this.chilCall();
+    selectData(array) {
+      this.initselectData(array);
     }
   }
 };

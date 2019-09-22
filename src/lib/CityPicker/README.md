@@ -1,29 +1,29 @@
-# lhdLogin
-cms后台系统的公用登录页面
+# lhdcitypicker
+这是基于element-ui进行二次开发的cms后台系统的省市选择组件
 
+### 效果图
+![效果图片](https://note.youdao.com/yws/api/personal/file/67A1C976C52A4C8E971B91CB12F495D9?method=download&shareKey=d34733554da22ab6e287dd70dbe9485e)
 ### 插件的安装
 #### NPM 
 ```
-npm i lhdcmslogin
+npm i lhdcitypicker
 ```
 #### 引入插件
 ```
 import Vue from 'vue';
-import lhdLogin from 'lhdcmslogin';
+import cityPicker from 'lhdcitypicker';
 
-Vue.use(lhdLogin);
+Vue.use(cityPicker);
 ```
 
 #### 基本用法  
 ```html
 <template>
   <div id="app">
-    <lhd-login 
-    title="代理投放平台" 
-    :rules="rules" 
-    :loading="loading" 
-    @loginSubmit='loginSubmit'>
-    </lhd-login>
+    <city-picker 
+    :selectData="selectData"
+    @selectChange="selectChange">
+    </city-picker>
   </div>
 </template>
 
@@ -31,36 +31,15 @@ Vue.use(lhdLogin);
 export default {
   name: "App",
   data() {
-    const validateName = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入账号"));
-        return;
-      }
-      callback();
-    };
-    const validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-        return;
-      }
-      callback();
-    };
     return {
-      rules: {
-        username: [{ validator: validateName, trigger: "blur" }],
-        password: [{ validator: validatePass, trigger: "blur" }]
-      },
-      loading:true
+     selectData:['210300']
     };
   },
 
   methods: {
-    loginSubmit(param){
-      console.log(param)
-      setTimeout(()=>{
-        this.loading = false;
-      },1000)
-    }
+   selectChange(data){
+     console.log(data)
+   }
   }
 };
 </script>
@@ -74,13 +53,12 @@ export default {
 }
 </style>
 
+
 ```
 
 ### API  
 | 参数 | 说明 | 类型  |  
 | - | :- | :- | :-: |  
-| title | 要传入的标题 | String |  
-| rules | 校验对象| Object | 
-| loading | 按钮的loading | Boolean |
-| loginSubmit | 提交事件 | Function |
+| selectData | 已选省市code | Array |  
+| selectChange | 选择事件 | Function |
 
